@@ -9,3 +9,5 @@ edition = "2018"
 [dependencies]
 "pcap"="*"
 chrono = "0.4"
+eframe = "0.15.0"
+egui = "0.15.0"
