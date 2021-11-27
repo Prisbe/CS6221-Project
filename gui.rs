@@ -1,7 +1,7 @@
 use eframe::{egui, epi};
 use crate::packetsniffer::get_n_packets;
 
-pub struct TemplateApp {
+pub struct OurApp {
     
     label: String,
 
@@ -18,7 +18,7 @@ pub struct TemplateApp {
     port_scanner_panel : bool
 }
 
-impl Default for TemplateApp {
+impl Default for OurApp {
     fn default() -> Self {
         Self {
             // Example stuff:
@@ -33,7 +33,7 @@ impl Default for TemplateApp {
 }
 
 
-impl epi::App for TemplateApp {
+impl epi::App for OurApp {
     fn name(&self) -> &str {
         "pAcKeT sNiFfEr & pOrT sCaNnEr"
     }
@@ -80,15 +80,6 @@ impl epi::App for TemplateApp {
             }
 
 
-            ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
-                ui.horizontal(|ui| {
-                    ui.spacing_mut().item_spacing.x = 0.0;
-                    ui.label("powered by ");
-                    ui.hyperlink_to("egui", "https://github.com/emilk/egui");
-                    ui.label(" and ");
-                    ui.hyperlink_to("eframe", "https://github.com/emilk/egui/tree/master/eframe");
-                });
-            });
         });
 
 
