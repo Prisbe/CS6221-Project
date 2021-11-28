@@ -15,19 +15,27 @@ pub struct OurApp {
 
     packet_sniffer_panel : bool,
 
-    port_scanner_panel : bool
+    port_scanner_panel : bool,
+
+    port : String,
+
+    scan_one_port : bool,
+
+    scan_all_ports : bool
 }
 
 impl Default for OurApp {
     fn default() -> Self {
         Self {
-            // Example stuff:
             label: "".to_owned(),
             value: 0.0,
             btn_stop_enabled: false,
             btn_clear_enabled: false,
             packet_sniffer_panel : false,
-            port_scanner_panel : false
+            port_scanner_panel : false,
+            port : "0".to_string(),
+            scan_one_port : false,
+            scan_all_ports : false
         }
     }
 }
@@ -49,9 +57,10 @@ impl epi::App for OurApp {
     }
     
 
-    // Called each time the UI needs repainting, which may be many times per second
+    // Called each time the UI needs repainting
     fn update(&mut self, ctx: &egui::CtxRef, frame: &mut epi::Frame<'_>) {
-        let Self { label, value , btn_stop_enabled, btn_clear_enabled, packet_sniffer_panel, port_scanner_panel} = self;
+        let Self { label, value , btn_stop_enabled, btn_clear_enabled,
+             packet_sniffer_panel, port_scanner_panel, port, scan_one_port,scan_all_ports} = self;
 
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
@@ -66,14 +75,14 @@ impl epi::App for OurApp {
         egui::SidePanel::left("side_panel").show(ctx, |ui| {
             ui.heading("Choose Tool");
 
-            if ui.add(egui::Button::new("Packet Sniffer")).clicked() 
-            {
+            if ui.add(egui::Button::new("Packet Sniffer ")).clicked() 
+            {                                       
                 *packet_sniffer_panel = true;
                 *port_scanner_panel = false;
             }
                 
                 
-            if ui.add(egui::Button::new("Port Scanner")).clicked() 
+            if ui.add(egui::Button::new("Port Scanner  ")).clicked() 
             {
                 *port_scanner_panel = true;
                 *packet_sniffer_panel = false;
@@ -131,27 +140,51 @@ impl epi::App for OurApp {
                 egui::ScrollArea::vertical().show(ui, |ui| {
                     ui.label(label);
                 });
-            }
+
+            } // packet sniffer ui
+
+            
+            if *port_scanner_panel
+            {
+                ui.heading("Port Scanner");
+                
+                /* These ifs manage the UI when the user wants to search all ports */
+                if ui.add(egui::Button::new("Scan all ports")).clicked()
+                {
+                    *scan_all_ports = true;
+                    *scan_one_port = false;
+                }
+                if *scan_all_ports
+                {
+                    let sep = egui::Separator::default();
+                    ui.add(sep.spacing(12.0));
+
+                    ui.label("TODO");
+                }
+
+                /* These ifs manage the UI when user wants to search for only one port */
+                if ui.add(egui::Button::new("Scan for specific port")).clicked()
+                {
+                    *scan_one_port = true;
+                    *scan_all_ports = false;
+                }
+                if *scan_one_port
+                {
+                    ui.horizontal(|ui| {
+                        ui.label("Enter Port Number: ");
+                        ui.text_edit_singleline(port);
+                    });
+
+                    let sep = egui::Separator::default();
+                    ui.add(sep.spacing(12.0));
+                }
+    
+                
+
+            } // port scanner ui
             
            
             
-        }); //Center Panel - Packet Sniffer
-
-        /* 
-        egui::CentralPanel::default().show(ctx, |ui| {
-
-            ui.set_visible(*port_scanner_panel);
-
-            ui.heading("Port Scanner");
-            
-            
-
-            let sep = egui::Separator::default();
-            
-            ui.add(sep.spacing(12.0));
-
-           
-        }); //Center Panel - Port Scanner
-        */
+        }); //Center Panel
     } // update()
 } // App
