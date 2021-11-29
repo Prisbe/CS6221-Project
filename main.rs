@@ -4,6 +4,7 @@
 
 mod gui;
 mod packetsniffer;
+mod port_scanner;
 
 #[cfg(not(target_arch = "wasm32"))]
 fn main() 
