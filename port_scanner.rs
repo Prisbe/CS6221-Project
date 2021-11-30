@@ -6,11 +6,11 @@ const MIN_PORT_NUMBER : u16 = 0;
 const MAX_PORT_NUMBER : u16 = 65535;
 const HOST : IpAddr = IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1));
 
-fn port_scanner(port: u16) {
+pub fn port_scan(port: u16) -> String
+{
     // mutable list to hold the open TCP ports
     let mut open_tcp_ports : Vec<u16> = Vec::with_capacity(MAX_PORT_NUMBER.into());
 
-    // possible specific port value is 0 to 65535
     if port >= 0 {
         // we specified a specific port, check that this is a valid port
         let number = &args[1];
@@ -31,17 +31,17 @@ fn port_scanner(port: u16) {
         else {
             scan_port(&mut open_tcp_ports, specific_port);
             if open_tcp_ports.len() == 1 {
-                let final_string = "Port ".to_owned() + &specific_port.to_string() + " is open.".to_owned();
+                let final_string = "Port ".to_owned() + &specific_port.to_string() + &" is open.".to_owned();
                 return final_string;
             }
             else {
-                let final_string = "Port ".to_owned() + &specific_port.to_string() + " is closed.".to_owned();
+                let final_string = "Port ".to_owned() + &specific_port.to_string() + &" is closed.".to_owned();
                 return final_string;
             }
         }
     }
 
-    // if no specific port given, then port should be a negative number
+    // if no specific port given, value of port should be less than 0
     else {
         for port in MIN_PORT_NUMBER..=MAX_PORT_NUMBER {
             scan_port(&mut open_tcp_ports, port);
@@ -52,7 +52,7 @@ fn port_scanner(port: u16) {
     }
 }
 
-fn scan_port(open_tcp_ports: &mut Vec<u16>, port: u16) {
+pub fn scan_port(open_tcp_ports: &mut Vec<u16>, port: u16) {
     // create new internet socket address, combining localhost ipaddr with port num
     let socket = SocketAddr::new(HOST, port);
     let timeout = Duration::new(2, 0); // two second timeout
@@ -63,12 +63,14 @@ fn scan_port(open_tcp_ports: &mut Vec<u16>, port: u16) {
     // else do nothing, this port is closed.
 }
 
-fn print_open_ports(open_tcp_ports: &mut Vec<u16>) {
+pub fn print_open_ports(open_tcp_ports: &mut Vec<u16>) -> String
+{
     //println!("{:?}", open_tcp_ports);
     let mut final_string = "The following ports are open:\n".to_owned();
 
     for port in open_tcp_ports.iter() {
-        final_string.push(port.to_string() + "\n".to_owned());
+        final_string.push_str(&port.to_string());
+        final_string.push_str(&"\n".to_owned());
     }
 
     return final_string;
