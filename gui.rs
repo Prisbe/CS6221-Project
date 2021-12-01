@@ -1,7 +1,6 @@
 use eframe::{egui, epi};
 use crate::packetsniffer::get_n_packets;
 use crate::port_scanner::port_scan;
-//use emath::vec2;
 
 
 
@@ -215,7 +214,7 @@ impl epi::App for OurApp {
                         *scan_one_port = false;
                         *btn_clear_enabled = true;
 
-                        *open_ports = port_scan();
+                        *open_ports = port_scan(0); // gave bad value to induce port scan of all ports
                     }
                    
                                 
@@ -270,9 +269,31 @@ impl epi::App for OurApp {
                     
                         if ui.add(egui::Button::new("Start").text_style(egui::TextStyle::Heading)).clicked()
                         {
-                            *open_single_port = port_scan();
-                            *scan_one_port_start = true;
-                            //TODO
+                            let num : u16 = match port_to_search.parse::<u16>() {
+                                Ok(n) => {
+                                    n
+                                },
+                                Err(_) => {
+                                    *scan_one_port_start = true;
+                                    *open_single_port = "Please use valid port number".to_string();
+                                    *port_to_search = "0".to_string();
+                                    return;
+                                },
+                            };
+                            
+                            if num == 0
+                            {
+                                *scan_one_port_start = true;
+                                *open_single_port = "Please use non-reserved port number".to_string();
+                            }
+                            else
+                            {
+                                *open_single_port = port_scan(num);
+                                *scan_one_port_start = true;
+                                *port_to_search = "0".to_string();
+                            }
+
+                            
                         }
                     });
 
@@ -282,7 +303,6 @@ impl epi::App for OurApp {
                         if ui.add(egui::Button::new("Clear").text_style(egui::TextStyle::Heading)).clicked()
                         {
                             *open_single_port = "".to_string();
-                            *scan_one_port = false;
                             *scan_one_port_start = false;
                         }
 
