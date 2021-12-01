@@ -11,31 +11,20 @@ pub fn port_scan(port: u16) -> String
     // mutable list to hold the open TCP ports
     let mut open_tcp_ports : Vec<u16> = Vec::with_capacity(MAX_PORT_NUMBER.into());
 
-    if port >= 0 {
-        // we specified a specific port, check that this is a valid port
-        let number = &args[1];
-        let specific_port: u16 = match number.parse() {
-            Ok(n) => {
-                n
-            },
-            Err(_) => {
-                eprintln!("Error: port provided is not a number");
-                process::exit(1);
-            },
-        };
-        //specific_port = &args[1].parse::<u16>();
-        if specific_port < MIN_PORT_NUMBER || specific_port > MAX_PORT_NUMBER {
+    if port > 0 {
+        
+        if port < MIN_PORT_NUMBER || port > MAX_PORT_NUMBER {
             println!("Port number provided is out of range.");
             process::exit(1);
         }
         else {
-            scan_port(&mut open_tcp_ports, specific_port);
+            scan_port(&mut open_tcp_ports, port);
             if open_tcp_ports.len() == 1 {
-                let final_string = "Port ".to_owned() + &specific_port.to_string() + &" is open.".to_owned();
+                let final_string = "Port ".to_owned() + &port.to_string() + &" is open.".to_owned();
                 return final_string;
             }
             else {
-                let final_string = "Port ".to_owned() + &specific_port.to_string() + &" is closed.".to_owned();
+                let final_string = "Port ".to_owned() + &port.to_string() + &" is closed.".to_owned();
                 return final_string;
             }
         }
